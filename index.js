@@ -27,7 +27,6 @@ L.Icon.Default.mergeOptions({
     shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
-import ChartSystem from "./src/js/library/charting/chartSystem"
 import ModelMenu from "./src/js/ui/modeling/components/ModelMenu";
 import PreloadingMenu from "./src/js/ui/preloading-menu/components/PreloadingMenu"
 import AutoQuery from "./src/js/library/autoQuery.js";
@@ -189,9 +188,6 @@ map.on("moveend", function (e) {
     updateLayers();
 });
 
-import {closeNav} from "./src/js/static/navButtons";
-import "./src/js/static/darkMode.js";
-import "./src/js/library/charting/chartBtnNewChartWindow.js";
 
 map.on('click', function () {
     closeNav();
