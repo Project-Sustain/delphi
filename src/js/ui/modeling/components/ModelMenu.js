@@ -342,7 +342,7 @@ export default class ModelMenu extends React.Component {
             }
             if (col.features.length === 0) continue;
             if (this.state.modelCategory === "REGRESSION")
-                col["label"] = "max_max_air_temperature";
+                col["label"] = "RELATIVE_HUMIDITY_2_METERS_ABOVE_SURFACE_PERCENT";
             ret.push(col);
         }
         return ret;
