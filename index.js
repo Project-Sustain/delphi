@@ -90,6 +90,7 @@ L.control.layers(baseMaps).addTo(map);
 standardTiles.addTo(map);
 
 const zoomControl = L.control.zoom({ position: "topright" }).addTo(map);
+document.getElementById("model-container").style.display = "block";
 
 var markers = L.markerClusterGroup({
     showCoverageOnHover: false,
