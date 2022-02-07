@@ -180,8 +180,8 @@ $.getJSON("src/json/menumetadata.json", async function (mdata) { //this isnt on 
 const modelContainer = document.getElementById("model-container");
 ReactDOM.render((<ModelMenu/>), modelContainer);
 
-const queryBlockContainer = document.getElementById("query-block-container");
-ReactDOM.render((<DefensiveOptimization />), queryBlockContainer);
+// const queryBlockContainer = document.getElementById("query-block-container");
+// ReactDOM.render((<DefensiveOptimization />), queryBlockContainer);
 
 const currentLocationContainer = document.getElementById("current-location");
 ReactDOM.render((<GoTo map={map}/>),currentLocationContainer)
