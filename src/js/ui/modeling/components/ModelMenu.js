@@ -267,8 +267,8 @@ export default class ModelMenu extends React.Component {
             ...await this.getExtraRequestParams()
         };
 
-        //console.log(JSON.stringify(q))
-        //console.log(q)
+        console.log(JSON.stringify(q))
+        console.log({q})
         const stream = this._sustainQuerier.executeModelQuery(JSON.stringify(q));
         let resData = [];
         stream.on('data', function (r) {
@@ -278,6 +278,7 @@ export default class ModelMenu extends React.Component {
         }.bind(this));
         stream.on('end', function (end) {
             //console.log("end")
+            console.log({resData})
             this.handleFullResponse(resData);
             this.setState({
                 modelStatus: "built"
