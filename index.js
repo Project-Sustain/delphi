@@ -171,12 +171,6 @@ window.renderInfrastructure = new RenderInfrastructure(map, markers, dataExplora
 });
 window.chartSystem = new ChartSystem(map, "src/json/graphPriority.json", window.renderInfrastructure);
 
-//where the magic happens
-$.getJSON("src/json/menumetadata.json", async function (mdata) { //this isnt on the mongo server yet so query it locally
-    const finalData = await AutoMenu.build(mdata, overwrite);
-    MenuGenerator.generate(finalData, document.getElementById("sidebar-container"));
-});
-
 const modelContainer = document.getElementById("model-container");
 ReactDOM.render((<ModelMenu/>), modelContainer);
 
@@ -185,10 +179,6 @@ ReactDOM.render((<ModelMenu/>), modelContainer);
 
 const currentLocationContainer = document.getElementById("current-location");
 ReactDOM.render((<GoTo map={map}/>),currentLocationContainer)
-
-map.on("moveend", function (e) {
-    updateLayers();
-});
 
 import {closeNav} from "./src/js/static/navButtons";
 import "./src/js/static/darkMode.js";

@@ -261,6 +261,7 @@ export default class ModelMenu extends React.Component {
         this.modelManager = null;
         const q = {};
         q.type = this.state.modelType;
+        q.gisJoins = await this.getCurrentViewportGISJOINS();
         q.collections = this.convertCollectionsToCollectionsQuery()
         q[this.getCurrentConfig().requestName] = {
             ...this.parameters,
@@ -341,8 +342,6 @@ export default class ModelMenu extends React.Component {
                 "features": this.convertFeaturesToFeaturesQuery(this.collections[collection])
             }
             if (col.features.length === 0) continue;
-            if (this.state.modelCategory === "REGRESSION")
-                col["label"] = "max_max_air_temperature";
             ret.push(col);
         }
         return ret;
@@ -363,10 +362,7 @@ export default class ModelMenu extends React.Component {
     async getExtraRequestParams() {
         switch (this.state.modelCategory) {
             case "REGRESSION":
-                const GISJOINS = await this.getCurrentViewportGISJOINS();
-                return {
-                    "gisJoins": GISJOINS
-                }
+                return null;
             case "CLUSTERING":
                 return {
                     "resolution": this.state.resolution
