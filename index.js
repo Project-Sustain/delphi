@@ -100,9 +100,7 @@ var markers = L.markerClusterGroup({
 });
 map.addLayer(markers);
 
-const dataExplorationGroup = L.layerGroup().addTo(map);
-const dataModelingGroup = L.layerGroup();
-window.dataExplorationGroup = dataExplorationGroup;
+const dataModelingGroup = L.layerGroup().addTo(map);
 window.dataModelingGroup = dataModelingGroup;
 
 import Worker from "./src/js/library/geometryLoaderWorker.js"
@@ -162,14 +160,6 @@ const overwrite = { //leaving this commented cause it explains the schema really
     //     "noAutoQuery": true
     // },
 }
-
-window.renderInfrastructure = new RenderInfrastructure(map, markers, dataExplorationGroup, overwrite, {
-    queryAlertText: document.getElementById('queryInfoText'),
-    maxElements: 10000,
-    maxLayers: 20,
-    simplifyThreshold: 0.0001
-});
-window.chartSystem = new ChartSystem(map, "src/json/graphPriority.json", window.renderInfrastructure);
 
 const modelContainer = document.getElementById("model-container");
 ReactDOM.render((<ModelMenu/>), modelContainer);

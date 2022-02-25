@@ -269,7 +269,7 @@ export default class ModelMenu extends React.Component {
         };
 
         //console.log(JSON.stringify(q))
-        //console.log(q)
+        console.log({q})
         const stream = this._sustainQuerier.executeModelQuery(JSON.stringify(q));
         let resData = [];
         stream.on('data', function (r) {
@@ -279,6 +279,7 @@ export default class ModelMenu extends React.Component {
         }.bind(this));
         stream.on('end', function (end) {
             //console.log("end")
+            console.log({resData})
             this.handleFullResponse(resData);
             this.setState({
                 modelStatus: "built"
@@ -321,10 +322,10 @@ export default class ModelMenu extends React.Component {
     }
 
     handleFullClusteringResponse(data) {
-        const refinedData = data.map(d => {
-            return d[Object.keys(d)[0]];
-        })
-        this.modelManager = new ClusterManager(refinedData, window.map, window.dataModelingGroup, this.getGeometryCollectionName());
+        // const refinedData = data.map(d => {
+        //     return d[Object.keys(d)[0]];
+        // })
+        this.modelManager = new ClusterManager(data, window.map, window.dataModelingGroup, this.getGeometryCollectionName());
     }
 
     handleFullRegressionResponse(data){
