@@ -259,7 +259,7 @@ export default class ModelMenu extends React.Component {
             modelStatus: "building"
         });
         this.modelManager = null;
-        const q = {};
+        let q = {};
         q.type = this.state.modelType;
         q.gisJoins = await this.getCurrentViewportGISJOINS();
         q.collections = this.convertCollectionsToCollectionsQuery()
@@ -268,8 +268,9 @@ export default class ModelMenu extends React.Component {
             ...await this.getExtraRequestParams()
         };
 
-        //console.log(JSON.stringify(q))
-        console.log({q})
+        console.log(JSON.stringify(q))
+        console.log({ q })
+
         const stream = this._sustainQuerier.executeModelQuery(JSON.stringify(q));
         let resData = [];
         stream.on('data', function (r) {
@@ -279,7 +280,7 @@ export default class ModelMenu extends React.Component {
         }.bind(this));
         stream.on('end', function (end) {
             //console.log("end")
-            console.log({resData})
+            console.log({ resData })
             this.handleFullResponse(resData);
             this.setState({
                 modelStatus: "built"
@@ -328,11 +329,11 @@ export default class ModelMenu extends React.Component {
         this.modelManager = new ClusterManager(data, window.map, window.dataModelingGroup, this.getGeometryCollectionName());
     }
 
-    handleFullRegressionResponse(data){
+    handleFullRegressionResponse(data) {
         const refinedData = data.map(d => {
             return d[Object.keys(d)[0]];
         });
-        this.modelManager = new RegressionManager(refinedData, window.map,window.dataModelingGroup, this.recentGeometry);
+        this.modelManager = new RegressionManager(refinedData, window.map, window.dataModelingGroup, this.recentGeometry);
     }
 
     convertCollectionsToCollectionsQuery() {
@@ -343,6 +344,10 @@ export default class ModelMenu extends React.Component {
                 "features": this.convertFeaturesToFeaturesQuery(this.collections[collection])
             }
             if (col.features.length === 0) continue;
+            if (this.state.modelCategory === 'REGRESSION') {
+                col.label = "TEMPERATURE_2_METERS_ABOVE_SURFACE_KELVIN";
+            }
+
             ret.push(col);
         }
         return ret;
@@ -382,7 +387,7 @@ export default class ModelMenu extends React.Component {
             const q = [
                 { "$match": { geometry: { "$geoIntersects": { "$geometry": { type: "Polygon", coordinates: [barray] } } } } }
             ];
-            const stream = this._sustainQuerier.getStreamForQuery(collectionName,JSON.stringify(q));
+            const stream = this._sustainQuerier.getStreamForQuery(collectionName, JSON.stringify(q));
 
             let GISJOINS = [];
             stream.on('data', function (r) {
@@ -397,11 +402,11 @@ export default class ModelMenu extends React.Component {
         });
     }
 
-    getGeometryCollectionName(){
+    getGeometryCollectionName() {
         return this.state.resolution === "Tract" ? "tract_geo_140mb_no_2d_index" : "county_geo_30mb_no_2d_index";
     }
 
-    getGeometryCollectionName2dIndexed(){
+    getGeometryCollectionName2dIndexed() {
         return this.state.resolution === "Tract" ? "tract_geo_140mb" : "county_geo_30mb";
     }
 }
