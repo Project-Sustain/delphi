@@ -331,17 +331,23 @@ export default class ModelMenu extends React.Component {
 
     handleFullRegressionResponse(data) {
         const refinedData = data.map(d => {
-            return d[Object.keys(d)[0]];
+            const e = d["regressionResponse"];
+            e.gisJoin = d.gisJoin;
+            return e;
         });
         this.modelManager = new RegressionManager(refinedData, window.map, window.dataModelingGroup, this.recentGeometry);
     }
 
     convertCollectionsToCollectionsQuery() {
         let ret = [];
+        const featureBlacklist = new Set([
+            "TEMPERATURE_2_METERS_ABOVE_SURFACE_KELVIN",
+            "DATE"
+        ])
         for (const collection in this.collections) {
             const col = {
                 "name": collection,
-                "features": this.convertFeaturesToFeaturesQuery(this.collections[collection])
+                "features": this.convertFeaturesToFeaturesQuery(this.collections[collection]).filter(feature => !featureBlacklist.has(feature))
             }
             if (col.features.length === 0) continue;
             if (this.state.modelCategory === 'REGRESSION') {

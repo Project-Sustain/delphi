@@ -28,6 +28,7 @@ export default class RegressionManager {
     }
 
     bindDataAndGeometry(data, geometry) {
+        console.log({data})
         return data.map(result => {
             const matchingGeometry = geometry.find(geom => geom.GISJOIN === result.gisJoin);
             matchingGeometry.properties = result;
