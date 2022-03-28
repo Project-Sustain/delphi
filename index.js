@@ -161,14 +161,32 @@ const overwrite = { //leaving this commented cause it explains the schema really
     // },
 }
 
+window.renderInfrastructure = new RenderInfrastructure(map, markers, overwrite, {
+    queryAlertText: document.getElementById('queryInfoText'),
+    maxElements: 10000,
+    maxLayers: 20,
+    simplifyThreshold: 0.0001
+});
+window.chartSystem = new ChartSystem(map, "src/json/graphPriority.json", window.renderInfrastructure);
+
+//where the magic happens
+$.getJSON("src/json/menumetadata.json", async function (mdata) { //this isnt on the mongo server yet so query it locally
+    const finalData = await AutoMenu.build(mdata, overwrite);
+    MenuGenerator.generate(finalData, document.getElementById("sidebar-container"));
+});
+
 const modelContainer = document.getElementById("model-container");
 ReactDOM.render((<ModelMenu/>), modelContainer);
 
-// const queryBlockContainer = document.getElementById("query-block-container");
-// ReactDOM.render((<DefensiveOptimization />), queryBlockContainer);
+const queryBlockContainer = document.getElementById("query-block-container");
+ReactDOM.render((<DefensiveOptimization />), queryBlockContainer);
 
 const currentLocationContainer = document.getElementById("current-location");
 ReactDOM.render((<GoTo map={map}/>),currentLocationContainer)
+
+map.on("moveend", function (e) {
+    updateLayers();
+});
 
 import {closeNav} from "./src/js/static/navButtons";
 import "./src/js/static/darkMode.js";
