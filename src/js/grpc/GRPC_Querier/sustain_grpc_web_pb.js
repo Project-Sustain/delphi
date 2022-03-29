@@ -575,6 +575,81 @@ proto.sustain.SustainPromiseClient.prototype.directQuery =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.sustain.DruidDirectRequest,
+ *   !proto.sustain.DruidDirectResponse>}
+ */
+const methodDescriptor_Sustain_DruidDirectQuery = new grpc.web.MethodDescriptor(
+  '/sustain.Sustain/DruidDirectQuery',
+  grpc.web.MethodType.SERVER_STREAMING,
+  proto.sustain.DruidDirectRequest,
+  proto.sustain.DruidDirectResponse,
+  /**
+   * @param {!proto.sustain.DruidDirectRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.sustain.DruidDirectResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.sustain.DruidDirectRequest,
+ *   !proto.sustain.DruidDirectResponse>}
+ */
+const methodInfo_Sustain_DruidDirectQuery = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.sustain.DruidDirectResponse,
+  /**
+   * @param {!proto.sustain.DruidDirectRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.sustain.DruidDirectResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.sustain.DruidDirectRequest} request The request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!grpc.web.ClientReadableStream<!proto.sustain.DruidDirectResponse>}
+ *     The XHR Node Readable Stream
+ */
+proto.sustain.SustainClient.prototype.druidDirectQuery =
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
+      '/sustain.Sustain/DruidDirectQuery',
+      request,
+      metadata || {},
+      methodDescriptor_Sustain_DruidDirectQuery);
+};
+
+
+/**
+ * @param {!proto.sustain.DruidDirectRequest} request The request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!grpc.web.ClientReadableStream<!proto.sustain.DruidDirectResponse>}
+ *     The XHR Node Readable Stream
+ */
+proto.sustain.SustainPromiseClient.prototype.druidDirectQuery =
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
+      '/sustain.Sustain/DruidDirectQuery',
+      request,
+      metadata || {},
+      methodDescriptor_Sustain_DruidDirectQuery);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.sustain.SlidingWindowRequest,
  *   !proto.sustain.SlidingWindowResponse>}
  */
@@ -655,7 +730,7 @@ proto.sustain.SustainPromiseClient.prototype.slidingWindowQuery =
  */
 const methodDescriptor_Sustain_EchoQuery = new grpc.web.MethodDescriptor(
   '/sustain.Sustain/EchoQuery',
-  grpc.web.MethodType.SERVER_STREAMING,
+  grpc.web.MethodType.UNARY,
   proto.sustain.DirectRequest,
   proto.sustain.DirectResponse,
   /**
@@ -689,32 +764,37 @@ const methodInfo_Sustain_EchoQuery = new grpc.web.AbstractClientBase.MethodInfo(
 
 
 /**
- * @param {!proto.sustain.DirectRequest} request The request proto
+ * @param {!proto.sustain.DirectRequest} request The
+ *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @return {!grpc.web.ClientReadableStream<!proto.sustain.DirectResponse>}
+ * @param {function(?grpc.web.Error, ?proto.sustain.DirectResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.sustain.DirectResponse>|undefined}
  *     The XHR Node Readable Stream
  */
 proto.sustain.SustainClient.prototype.echoQuery =
-    function(request, metadata) {
-  return this.client_.serverStreaming(this.hostname_ +
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
       '/sustain.Sustain/EchoQuery',
       request,
       metadata || {},
-      methodDescriptor_Sustain_EchoQuery);
+      methodDescriptor_Sustain_EchoQuery,
+      callback);
 };
 
 
 /**
- * @param {!proto.sustain.DirectRequest} request The request proto
+ * @param {!proto.sustain.DirectRequest} request The
+ *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @return {!grpc.web.ClientReadableStream<!proto.sustain.DirectResponse>}
- *     The XHR Node Readable Stream
+ * @return {!Promise<!proto.sustain.DirectResponse>}
+ *     A native promise that resolves to the response
  */
 proto.sustain.SustainPromiseClient.prototype.echoQuery =
     function(request, metadata) {
-  return this.client_.serverStreaming(this.hostname_ +
+  return this.client_.unaryCall(this.hostname_ +
       '/sustain.Sustain/EchoQuery',
       request,
       metadata || {},

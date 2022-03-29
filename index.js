@@ -90,6 +90,7 @@ L.control.layers(baseMaps).addTo(map);
 standardTiles.addTo(map);
 
 const zoomControl = L.control.zoom({ position: "topright" }).addTo(map);
+document.getElementById("model-container").style.display = "block";
 
 var markers = L.markerClusterGroup({
     showCoverageOnHover: false,
@@ -99,9 +100,7 @@ var markers = L.markerClusterGroup({
 });
 map.addLayer(markers);
 
-const dataExplorationGroup = L.layerGroup().addTo(map);
-const dataModelingGroup = L.layerGroup();
-window.dataExplorationGroup = dataExplorationGroup;
+const dataModelingGroup = L.layerGroup().addTo(map);
 window.dataModelingGroup = dataModelingGroup;
 
 import Worker from "./src/js/library/geometryLoaderWorker.js"
@@ -162,7 +161,7 @@ const overwrite = { //leaving this commented cause it explains the schema really
     // },
 }
 
-window.renderInfrastructure = new RenderInfrastructure(map, markers, dataExplorationGroup, overwrite, {
+window.renderInfrastructure = new RenderInfrastructure(map, markers, overwrite, {
     queryAlertText: document.getElementById('queryInfoText'),
     maxElements: 10000,
     maxLayers: 20,

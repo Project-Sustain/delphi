@@ -45,9 +45,11 @@ service Sustain {
   // Issue a query directly from the gRPC client to MongoDB
   rpc DirectQuery (DirectRequest) returns (stream DirectResponse) {}
 
+  rpc DruidDirectQuery (DruidDirectRequest) returns (stream DruidDirectResponse) {}
+
   rpc SlidingWindowQuery (SlidingWindowRequest) returns (stream SlidingWindowResponse) {}
 
-  rpc EchoQuery (DirectRequest) returns (stream DirectResponse) {}
+  rpc EchoQuery (DirectRequest) returns (DirectResponse) {}
 }
 
 message SlidingWindowRequest {
@@ -62,55 +64,72 @@ message SlidingWindowResponse {
   repeated string movingAverages = 2;
 }
 
+/* --- Modeling requests/responses --- */
+
+// Supported modeling categories
 enum ModelType {
-    K_MEANS_CLUSTERING = 0;
-    LINEAR_REGRESSION = 1;
-    BISECTING_K_MEANS = 2;
-    GAUSSIAN_MIXTURE = 3;
-    POWER_ITERATION_CLUSTERING = 4;
-    LATENT_DIRICHLET_ALLOCATION = 5;
-    R_FOREST_REGRESSION = 6;
-    G_BOOST_REGRESSION = 7;
+  K_MEANS_CLUSTERING = 0;
+  LINEAR_REGRESSION = 1;
+  BISECTING_K_MEANS = 2;
+  GAUSSIAN_MIXTURE = 3;
+  POWER_ITERATION_CLUSTERING = 4;
+  LATENT_DIRICHLET_ALLOCATION = 5;
+  R_FOREST_REGRESSION = 6;
+  G_BOOST_REGRESSION = 7;
 }
 
-message ModelRequest {
-  ModelType type = 1;
-  repeated Collection collections = 2;
-  KMeansClusteringRequest kMeansClusteringRequest = 3;
-  LinearRegressionRequest linearRegressionRequest = 4;
-  BisectingKMeansRequest bisectingKMeansRequest = 5;
-  GaussianMixtureRequest gaussianMixtureRequest = 6;
-  LatentDirichletAllocationRequest latentDirichletAllocationRequest = 7;
-  RForestRegressionRequest rForestRegressionRequest = 8;
-  GBoostRegressionRequest gBoostRegressionRequest = 9;
-}
-
+// MongoDB collection attributes for modeling
 message Collection {
   string name = 1;
   string label = 2;
-  repeated string features = 3;
+  string gisJoinKey = 3; // GISJOIN field name ("COUNTY_GISJOIN", "STATE_GISJOIN", "GISJOIN", etc.)
+  repeated string features = 4;
 }
 
+// gRPC client modeling request
+message ModelRequest {
+  ModelType type = 1; // Enum type of model to build (LINEAR_REGRESSION, BISECTING_K_MEANS, etc.)
+  repeated string gisJoins = 2; // List of GISJOINs to train/test models for
+  repeated Collection collections = 3; // MongoDB collection name/fields/label to use for model
+
+  // ModelRequest will contain one of the following, with more specific parameters, etc
+  KMeansClusteringRequest kMeansClusteringRequest = 4;
+  LinearRegressionRequest linearRegressionRequest = 5;
+  BisectingKMeansRequest bisectingKMeansRequest = 6;
+  GaussianMixtureRequest gaussianMixtureRequest = 7;
+  LatentDirichletAllocationRequest latentDirichletAllocationRequest = 8;
+  RForestRegressionRequest rForestRegressionRequest = 9;
+  GBoostRegressionRequest gBoostRegressionRequest = 10;
+}
+
+// gRPC client modeling response
 message ModelResponse {
-  KMeansClusteringResponse kMeansClusteringResponse = 1;
-  LinearRegressionResponse linearRegressionResponse = 2;
-  RForestRegressionResponse rForestRegressionResponse= 3;
-  GBoostRegressionResponse gBoostRegressionResponse = 4;
-  BisectingKMeansResponse bisectingKMeansResponse = 5;
-  GaussianMixtureResponse gaussianMixtureResponse = 6;
-  LatentDirichletAllocationResponse latentDirichletAllocationResponse = 7;
+  string gisJoin = 1;
+  RegressionResponse regressionResponse = 2;
+  ClusteringResponse clusteringResponse = 3;
 }
 
-// Clustering
+/* --- ModelResponse subtypes --- */
+
+message ClusteringResponse {
+  int32 prediction = 1;
+}
+
+message RegressionResponse {
+  double totalIterations = 1;
+  double rmseResidual = 2;
+  double r2Residual = 3;
+  double intercept = 4;
+  repeated double slopeCoefficients = 5;
+  repeated double objectiveHistory = 6;
+}
+
+/* --- Clustering ModelRequest subtypes --- */
+
 message KMeansClusteringRequest {
   int32 clusterCount = 1;
   int32 maxIterations = 2;
   CensusResolution resolution = 3;
-}
-
-message KMeansClusteringResponse {
-  string gisJoin = 1;
-  int32 prediction = 2; // cluster
 }
 
 message BisectingKMeansRequest {
@@ -119,20 +138,10 @@ message BisectingKMeansRequest {
   CensusResolution resolution = 3;
 }
 
-message BisectingKMeansResponse {
-  string gisJoin = 1;
-  int32 prediction = 2; // cluster
-}
-
 message GaussianMixtureRequest {
   int32 clusterCount = 1;
   int32 maxIterations = 2;
   CensusResolution resolution = 3;
-}
-
-message GaussianMixtureResponse {
-  string gisJoin = 1;
-  int32 prediction = 2; // cluster
 }
 
 message LatentDirichletAllocationRequest {
@@ -141,61 +150,25 @@ message LatentDirichletAllocationRequest {
   CensusResolution resolution = 3;
 }
 
-message LatentDirichletAllocationResponse {
-  string gisJoin = 1;
-  int32 prediction = 2; // cluster
-}
+/* --- Regression ModelRequest subtypes --- */
 
-// End of Clustering
 message LinearRegressionRequest {
-  repeated string gisJoins = 2;
-  string loss = 3;
-  string solver = 4;
-  int32 maxIterations = 5;
-  int32 aggregationDepth = 6;
-  double elasticNetParam = 7;
-  double epsilon = 8;
-  double convergenceTolerance = 9;
-  double regularizationParam = 10;
-  bool setStandardization = 11;
-  bool fitIntercept = 12;
-}
-
-message LinearRegressionResponse {
-  string gisJoin = 1;
-  double totalIterations = 2;
-  double rmseResidual = 3;
-  double r2Residual = 4;
-  double intercept = 5;
-  repeated double slopeCoefficients = 6;
-  repeated double objectiveHistory = 7;
+  string loss = 1;
+  string solver = 2;
+  int32 maxIterations = 3;
+  int32 aggregationDepth = 4;
+  double elasticNetParam = 5;
+  double epsilon = 6;
+  double convergenceTolerance = 7;
+  double regularizationParam = 8;
+  bool setStandardization = 9;
+  bool fitIntercept = 10;
 }
 
 message RForestRegressionRequest {
-  repeated string gisJoins = 1;
-  bool isBootstrap = 2;
-  double subsamplingRate = 3;
-  int32 numTrees = 4;
-  string featureSubsetStrategy = 5;
-  string impurity = 6;
-  int32 maxDepth = 7;
-  int32 maxBins = 8;
-  double trainSplit = 9;
-  double minInfoGain = 10;
-  int32 minInstancesPerNode = 11;
-  double minWeightFractionPerNode = 12;
-}
-
-message RForestRegressionResponse {
-  string gisJoin = 1;
-  double rmse = 2;
-  double r2 = 3;
-}
-
-message GBoostRegressionRequest {
-  repeated string gisJoins = 1;
+  bool isBootstrap = 1;
   double subsamplingRate = 2;
-  double stepSize = 3;
+  int32 numTrees = 3;
   string featureSubsetStrategy = 4;
   string impurity = 5;
   int32 maxDepth = 6;
@@ -204,14 +177,21 @@ message GBoostRegressionRequest {
   double minInfoGain = 9;
   int32 minInstancesPerNode = 10;
   double minWeightFractionPerNode = 11;
-  string lossType = 12;
-  int32 maxIter = 13;
 }
 
-message GBoostRegressionResponse {
-  string gisJoin = 1;
-  double rmse = 2;
-  double r2 = 3;
+message GBoostRegressionRequest {
+  double subsamplingRate = 1;
+  double stepSize = 2;
+  string featureSubsetStrategy = 3;
+  string impurity = 4;
+  int32 maxDepth = 5;
+  int32 maxBins = 6;
+  double trainSplit = 7;
+  double minInfoGain = 8;
+  int32 minInstancesPerNode = 9;
+  double minWeightFractionPerNode = 10;
+  string lossType = 11;
+  int32 maxIter = 12;
 }
 
 enum SpatialOp {
@@ -268,11 +248,11 @@ message Query {
 }
 
 message CountRequest {
-  string collection = 1;
+  repeated string collections = 1;
 }
 
 message CountResponse {
-  int64 count = 1;
+  repeated int64 count = 1;
 }
 
 message DirectRequest {
@@ -282,4 +262,12 @@ message DirectRequest {
 
 message DirectResponse {
   string data = 1;
+}
+
+message DruidDirectRequest {
+  string query = 1; // JSON for druid native query
+}
+
+message DruidDirectResponse {
+  string data = 1; // Will also be JSON
 }

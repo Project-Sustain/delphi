@@ -101,7 +101,7 @@ export default class ClusterManager {
             buckets.push([]);
         }
         for (const d of this.data){
-            buckets[d.prediction].push(d.gisJoin);
+            buckets[d.clusteringResponse.prediction].push(d.gisJoin);
         }
         let j = 0;
 
@@ -135,8 +135,8 @@ export default class ClusterManager {
     getMaxPrediction(){
         let max = 0;
         for(const result of this.data){
-            if(result.prediction > max)
-                max = result.prediction;
+            if(result.clusteringResponse.prediction > max)
+                max = result.clusteringResponse.prediction;
         }
         return max;
     }
