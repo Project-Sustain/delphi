@@ -33,7 +33,7 @@ import PreloadingMenu from "./src/js/ui/preloading-menu/components/PreloadingMen
 import AutoQuery from "./src/js/library/autoQuery.js";
 import RenderInfrastructure from "./src/js/library/renderInfrastructure.js";
 import AutoMenu from "./src/js/library/autoMenu.js";
-import MenuGenerator, { updateLayers } from "./src/js/ui/menuGenerator.js";
+// import MenuGenerator, { updateLayers } from "./src/js/ui/menuGenerator.js";
 import DefensiveOptimization from "./src/js/ui/DefensiveOptimization";
 import GoTo from "./src/js/ui/GoTo"
 
@@ -169,24 +169,24 @@ window.renderInfrastructure = new RenderInfrastructure(map, markers, overwrite, 
 });
 window.chartSystem = new ChartSystem(map, "src/json/graphPriority.json", window.renderInfrastructure);
 
-//where the magic happens
-$.getJSON("src/json/menumetadata.json", async function (mdata) { //this isnt on the mongo server yet so query it locally
-    const finalData = await AutoMenu.build(mdata, overwrite);
-    MenuGenerator.generate(finalData, document.getElementById("sidebar-container"));
-});
+// where the magic happens
+// $.getJSON("src/json/menumetadata.json", async function (mdata) { //this isnt on the mongo server yet so query it locally
+//     const finalData = await AutoMenu.build(mdata, overwrite);
+//     MenuGenerator.generate(finalData, document.getElementById("sidebar-container"));
+// });
 
 const modelContainer = document.getElementById("model-container");
 ReactDOM.render((<ModelMenu/>), modelContainer);
 
-const queryBlockContainer = document.getElementById("query-block-container");
-ReactDOM.render((<DefensiveOptimization />), queryBlockContainer);
-
+// const queryBlockContainer = document.getElementById("query-block-container");
+// ReactDOM.render((<DefensiveOptimization />), queryBlockContainer);
+//
 const currentLocationContainer = document.getElementById("current-location");
 ReactDOM.render((<GoTo map={map}/>),currentLocationContainer)
 
-map.on("moveend", function (e) {
-    updateLayers();
-});
+// map.on("moveend", function (e) {
+//     updateLayers();
+// });
 
 import {closeNav} from "./src/js/static/navButtons";
 import "./src/js/static/darkMode.js";
