@@ -5,3 +5,4 @@
 .nfs*
 *.DS_Store
 *.vscode
+src/js/bugSubmitAuth.js

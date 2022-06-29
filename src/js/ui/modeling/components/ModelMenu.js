@@ -5,8 +5,9 @@ import ModelParameter from "./ModelParameter";
 import ModelResolution from "./ModelResolution";
 import Util from "../../../library/apertureUtil";
 import { sustain_querier } from "../../../grpc/GRPC_Querier/grpc_querier.js";
-import ClusterManager from "../../../model-managers/clusterManager"
-import RegressionManager from "../../../model-managers/regressionManager"
+import ClusterManager from "../../../model-managers/clusterManager";
+import RegressionManager from "../../../model-managers/regressionManager";
+import { auth } from '../../../bugSubmitAuth';
 
 export default class ModelMenu extends React.Component {
     constructor(props) {
@@ -20,6 +21,7 @@ export default class ModelMenu extends React.Component {
         this.setResolution = this.setResolution.bind(this)
         this.restart = this.restart.bind(this)
 
+        this.description = "";
         this.collections = {};
         this.parameters = {};
 
@@ -252,6 +254,14 @@ export default class ModelMenu extends React.Component {
         return e("button", { type: "button", className: "btn btn-outline-dark modelButton", onClick: this.runModel },
             "Run Model"
         );
+    }
+
+    updateDescription(event) {
+        const newDescription = event.target.value;
+        console.log({newDescription});
+        this.setState({
+            description: newDescription
+        })
     }
 
     async runModel() {
